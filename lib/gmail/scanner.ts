@@ -1,7 +1,7 @@
 import type { Account, AccountCategory, AccountDecision } from '@/types';
 import { scoreUnknownDomains } from '@/lib/ai/riskScorer';
 import { SERVICE_MAP } from '@/lib/gmail/serviceMap';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 
 const SKIP_DOMAINS = new Set([
   'gmail.com',
@@ -92,7 +92,7 @@ export async function scanGmail(accessToken: string, userId: string): Promise<Ac
 
   if (allAccounts.length > 0) {
     const rows = allAccounts.map(accountToDbRow);
-    const { error } = await supabase
+    const { error } = await getSupabaseAdminClient()
       .from('accounts')
       .upsert(rows, { onConflict: 'user_id,service_name', ignoreDuplicates: false });
 
@@ -101,7 +101,7 @@ export async function scanGmail(accessToken: string, userId: string): Promise<Ac
     }
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('accounts')
     .select('*')
     .eq('user_id', userId);

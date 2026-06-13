@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 import type { Session } from 'next-auth';
 
 type CurrentUserResult =
@@ -13,7 +13,7 @@ export async function getCurrentUserId(): Promise<CurrentUserResult> {
     return { error: 'Unauthorized', status: 401 as const };
   }
 
-  const { data: user, error } = await supabase
+  const { data: user, error } = await getSupabaseAdminClient()
     .from('users')
     .select('id')
     .eq('email', session.user.email)

@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -29,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.sub = profile?.email ?? token.email ?? token.sub;
 
         if (profile?.email) {
-          await supabase.from('users').upsert(
+          await getSupabaseAdminClient().from('users').upsert(
             {
               email: profile.email,
               name: profile.name,

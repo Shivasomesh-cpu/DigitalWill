@@ -1,8 +1,8 @@
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 import type { DeadManConfig } from '@/types';
 
 export async function getDeadman(userId: string): Promise<DeadManConfig | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('deadman_configs')
     .select('*')
     .eq('user_id', userId)
@@ -17,7 +17,7 @@ export async function saveDeadman(
   userId: string,
   config: DeadManConfig,
 ): Promise<DeadManConfig> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('deadman_configs')
     .upsert(
       {
@@ -35,7 +35,7 @@ export async function saveDeadman(
 }
 
 export async function disableDeadman(userId: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabaseAdminClient()
     .from('deadman_configs')
     .update({ is_active: false })
     .eq('user_id', userId);
@@ -45,7 +45,7 @@ export async function disableDeadman(userId: string): Promise<void> {
 
 export async function pingUser(userId: string): Promise<string> {
   const now = new Date().toISOString();
-  const { error } = await supabase.from('users').update({ last_ping: now }).eq('id', userId);
+  const { error } = await getSupabaseAdminClient().from('users').update({ last_ping: now }).eq('id', userId);
   if (error) throw error;
   return now;
 }

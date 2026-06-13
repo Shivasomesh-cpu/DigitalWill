@@ -1,9 +1,9 @@
 import { accountToDbRow, dbRowToAccount } from '@/lib/gmail/scanner';
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 import type { Account } from '@/types';
 
 export async function getUserAccounts(userId: string): Promise<Account[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('accounts')
     .select('*')
     .eq('user_id', userId)
@@ -17,7 +17,7 @@ export async function upsertAccount(
   userId: string,
   partial: Partial<Account>,
 ): Promise<Account> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('accounts')
     .upsert(
       { user_id: userId, ...accountToDbRow({ ...partial, userId }) },
@@ -35,7 +35,7 @@ export async function patchAccount(
   userId: string,
   updates: Partial<Account>,
 ): Promise<Account> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('accounts')
     .update(accountToDbRow(updates))
     .eq('id', id)
@@ -48,7 +48,7 @@ export async function patchAccount(
 }
 
 export async function deleteAccount(id: string, userId: string): Promise<void> {
-  const { error } = await supabase
+  const { error } = await getSupabaseAdminClient()
     .from('accounts')
     .delete()
     .eq('id', id)

@@ -1,7 +1,19 @@
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+
+function getResendClient() {
+  if (resendClient) return resendClient;
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('Resend API key is missing');
+  }
+
+  resendClient = new Resend(apiKey);
+  return resendClient;
+}
 
 type DeadmanConfigRow = {
   id: string;
@@ -46,7 +58,7 @@ export async function GET(req: Request): Promise<Response> {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: configs, error } = await supabase
+  const { data: configs, error } = await getSupabaseAdminClient()
     .from('deadman_configs')
     .select(
       `
@@ -84,7 +96,7 @@ export async function GET(req: Request): Promise<Response> {
 
     if (elapsed < thresholdMs) continue;
 
-    const { data: accounts, error: accountError } = await supabase
+    const { data: accounts, error: accountError } = await getSupabaseAdminClient()
       .from('accounts')
       .select('service_name, decision, transfer_to')
       .eq('user_id', user.id);
@@ -111,14 +123,14 @@ export async function GET(req: Request): Promise<Response> {
       customMessage: will.custom_message ?? undefined,
     });
 
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: process.env.RESEND_FROM_EMAIL ?? 'DigitalWill <noreply@yourdomain.com>',
       to: will.trusted_contact_email,
       subject: `Instructions from ${user.name ?? user.email} - DigitalWill`,
       html: emailBody,
     });
 
-    await supabase
+    await getSupabaseAdminClient()
       .from('deadman_configs')
       .update({ last_triggered: new Date().toISOString() })
       .eq('id', config.id);

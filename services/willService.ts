@@ -1,8 +1,8 @@
-import { supabase } from '@/lib/supabase/client';
+import { getSupabaseAdminClient } from '@/lib/supabase/client';
 import type { WillConfig } from '@/types';
 
 export async function getWill(userId: string): Promise<WillConfig | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('will_configs')
     .select('*')
     .eq('user_id', userId)
@@ -14,7 +14,7 @@ export async function getWill(userId: string): Promise<WillConfig | null> {
 }
 
 export async function saveWill(userId: string, config: WillConfig): Promise<WillConfig> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabaseAdminClient()
     .from('will_configs')
     .upsert(
       {
