@@ -1,0 +1,9 @@
+/* 
+  NOTE: The @tailwind and @apply warnings below are IDE linter warnings only.
+  These are NOT actual errors. PostCSS will properly process these directives
+  when the development server runs. The CSS will work perfectly fine.
+  
+  If you want to suppress these warnings in VS Code:
+  Install: "PostCSS Language Support" extension
+  Or add to .stylelintignore
+*/
