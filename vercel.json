@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/deadman/check",
+      "schedule": "0 18 * * *"
+    }
+  ]
+}

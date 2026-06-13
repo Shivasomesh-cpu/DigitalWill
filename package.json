@@ -1,0 +1,29 @@
+{
+  "name": "placeready-digitalwill",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@auth/supabase-adapter": "latest",
+    "@supabase/supabase-js": "latest",
+    "googleapis": "latest",
+    "next": "14",
+    "next-auth": "beta",
+    "react": "^18",
+    "react-dom": "^18",
+    "resend": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14",
+    "typescript": "^5"
+  }
+}
